@@ -76,7 +76,7 @@ Cap ($cx0 + $m + 6) ($y - 2) $m $m ([string][char]0x2191) $false $false
 Cap $cx0 ($y + $m + 6) $m $m ([string][char]0x2190) $false $false; Cap ($cx0 + $m + 6) ($y + $m + 6) $m $m ([string][char]0x2193) $false $false; Cap ($cx0 + 2 * ($m + 6)) ($y + $m + 6) $m $m ([string][char]0x2192) $false $false
 
 Title 'Keyboard & Mouse Support' ($W / 2) 262 74
-Title ('with key prompts  ' + [char]0x00B7 + '  Harvest Moon: Echoes of Teradea') ($W / 2) 325 30
+Title ('with key prompts  ' + [char]0x00B7 + '  Harvest Moon: Home Sweet Home Special Edition') ($W / 2) 325 30
 
 $g.Dispose(); New-Item -ItemType Directory -Force (Split-Path $Out) | Out-Null; $bmp.Save($Out); $bmp.Dispose(); Write-Output $Out
 
