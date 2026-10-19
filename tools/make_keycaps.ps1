@@ -109,6 +109,19 @@ function Get-ArtBox($path) {
     return $r
 }
 
+# Bounding box of cream/brown (non-red) solid pixels: the stick glyph inside the mine direction arrows.
+function Get-CreamBox($path) {
+    $b = [System.Drawing.Bitmap]::FromFile($path)
+    $minX = $b.Width; $maxX = -1; $minY = $b.Height; $maxY = -1
+    for ($y = 0; $y -lt $b.Height; $y++) { for ($x = 0; $x -lt $b.Width; $x++) {
+        $c = $b.GetPixel($x, $y)
+        if ($c.A -gt 100 -and -not ($c.R -gt $c.G + 40 -and $c.R -gt $c.B + 60)) {
+            if ($x -lt $minX) { $minX = $x }; if ($x -gt $maxX) { $maxX = $x }; if ($y -lt $minY) { $minY = $y }; if ($y -gt $maxY) { $maxY = $y }
+        }
+    } }
+    $b.Dispose()
+    return @{ X = $minX; Y = $minY; W = ($maxX - $minX + 1); H = ($maxY - $minY + 1) }
+}
 # Draw one blank cap at (x,y,w,h); returns the inner label box.
 function Draw-Cap($g, [float]$x, [float]$y, [float]$w, [float]$h, [bool]$solid, [float]$stroke, [bool]$round) {
     $r = if ($round) { [Math]::Min($w, $h) / 2 - 0.01 } else { [Math]::Min($w, $h) * 0.22 }
@@ -184,6 +197,15 @@ foreach ($f in Get-ChildItem $Glyphs -Filter "*icon_guide_*.png" | Where-Object 
         if (-not $box.Round) { $w = $bw; $h = $bh }
         $x = $bx + ($bw - $w) / 2; $y = $by + ($bh - $h) / 2
         # every shape sits where the source art sits: centred on the art's bounding box
+        # mine stick-direction glyphs: a red arrow above the stick. Keep the cap stick-sized at the stick's spot
+        # (bottom of the art); the direction letter carries the meaning.
+        if ($name -match 'ui_mine_icon_guide') {
+            # the stick is the only non-red element: its cream pixels give the ring's position and size
+            $cb = Get-CreamBox $f.FullName
+            $w = $cb.W; $h = $cb.W
+            $x = $cb.X; $y = $cb.Y
+            $box.Round = $true
+        }
 
         $lb = Draw-Cap $g $x $y $w $h $solid $stroke $box.Round
         $lb.control = $control
@@ -212,6 +234,8 @@ for ($i = 0; $i -lt $count; $i++) {
 }
 $sg.Dispose(); $sheet.Save($Preview); $sheet.Dispose()
 Write-Host "preview: $Preview"
+
+
 
 
 
