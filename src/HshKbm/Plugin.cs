@@ -13,7 +13,7 @@ namespace HshKbm
     {
         public const string GUID = "HomeSweetHome.KeyboardMouse";
         public const string NAME = "Home Sweet Home Keyboard & Mouse";
-        public const string VERSION = "1.0.1";
+        public const string VERSION = "0.0.2";
 
         internal static ManualLogSource Log;
         internal static KbmConfig Cfg;
