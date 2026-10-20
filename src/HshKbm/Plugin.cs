@@ -13,7 +13,7 @@ namespace HshKbm
     {
         public const string GUID = "HomeSweetHome.KeyboardMouse";
         public const string NAME = "Home Sweet Home Keyboard & Mouse";
-        public const string VERSION = "0.0.1";
+        public const string VERSION = "1.0.1";
 
         internal static ManualLogSource Log;
         internal static KbmConfig Cfg;
@@ -60,6 +60,7 @@ namespace HshKbm
         private void Update()
         {
             CursorControl.Tick();
+            MenuOnlyGate.Tick();
         }
     }
 
@@ -107,9 +108,10 @@ namespace HshKbm
         public readonly FixedEntry DpadLeft = new FixedEntry("leftArrow");
         public readonly FixedEntry DpadRight = new FixedEntry("rightArrow");
         public readonly FixedEntry LeftStick = new FixedEntry("w;s;a;d");
-        // Right stick: camera in the field (the mouse) and pages/sub-tabs in menus, so only left/right keys.
-        // Entries are up;down;left;right; an empty entry means no key for that direction.
-        public readonly FixedEntry RightStick = new FixedEntry(";;leftBracket;rightBracket");
+        // Right stick: camera in the field (the mouse) and list/sub-tab navigation in menus. It takes the arrow keys,
+        // shared with the d-pad, and is only live outside gameplay (MenuOnlyGate) so arrows in the field stay quick actions.
+        // Entries are up;down;left;right.
+        public readonly FixedEntry RightStick = new FixedEntry("upArrow;downArrow;leftArrow;rightArrow");
 
         internal class FixedEntry
         {
@@ -238,7 +240,7 @@ namespace HshKbm
     {
         private static bool _wasLocked;
 
-        private static bool InGameplayMap()
+        internal static bool InGameplayMap()
         {
             try
             {

@@ -288,9 +288,16 @@ namespace HshKbm
                         {
                             var syntax = action.AddCompositeBinding("2DVector(mode=2)", b.interactions);
                             string[] partNames = { "Up", "Down", "Left", "Right" };
+                            int parts = 0;
                             for (int k = 0; k < 4; k++)
                             {
-                                if (!string.IsNullOrEmpty(keys[k])) syntax = syntax.With(partNames[k], keys[k]);
+                                if (!string.IsNullOrEmpty(keys[k])) { syntax = syntax.With(partNames[k], keys[k]); parts++; }
+                            }
+                            if (control == "rightStick")
+                            {
+                                // menu-only: the right stick's keys are the arrows, shared with the d-pad quick actions in the field
+                                int count = action.bindings.Count;
+                                for (int k = count - parts; k < count; k++) MenuOnlyGate.Register(action, k);
                             }
                             added++;
                         }
@@ -456,6 +463,44 @@ namespace HshKbm
         internal static string ToPath(string item)
         {
             return item.StartsWith("<") ? item : "<Keyboard>/" + item;
+        }
+    }
+
+    /// <summary>
+    /// Bindings that are only live outside gameplay: the right stick's keyboard composite uses the arrow keys,
+    /// which are the d-pad quick actions in the field, so it is disabled there and enabled in menus.
+    /// </summary>
+    internal static class MenuOnlyGate
+    {
+        private struct Entry { public InputAction Action; public int Index; }
+        private static readonly List<Entry> _entries = new List<Entry>();
+        private static bool _gameplay;
+        private static bool _applied;
+
+        public static void Register(InputAction action, int bindingIndex)
+        {
+            _entries.Add(new Entry { Action = action, Index = bindingIndex });
+        }
+
+        public static void Tick()
+        {
+            if (_entries.Count == 0) return;
+            bool gameplay = CursorControl.InGameplayMap();
+            if (_applied && gameplay == _gameplay) return;
+            _gameplay = gameplay;
+            _applied = true;
+            foreach (var e in _entries)
+            {
+                try
+                {
+                    if (gameplay) e.Action.ApplyBindingOverride(e.Index, "");
+                    else e.Action.RemoveBindingOverride(e.Index);
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.LogDebug("Menu gate failed: " + ex.Message);
+                }
+            }
         }
     }
 }

@@ -60,7 +60,7 @@ and the `BepInEx` folder.
 | Camera reset / top-down view | **C** (or middle click) / **V** |
 | Menu / options | **Esc** |
 | Quick actions (d-pad), menu selectors | Arrow keys |
-| Sub-tabs / pages (right stick in menus) | **[** / **]** |
+| Right stick in menus (lists, sub-tabs, pages) | Arrow keys |
 | Walk instead of run | hold **Ctrl** |
 | Release the mouse cursor | hold **Alt** |
 
