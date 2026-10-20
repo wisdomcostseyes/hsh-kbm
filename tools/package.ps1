@@ -1,4 +1,4 @@
-# Builds a release zip for Nexus/GitHub: dist\HshKbm-<version>.zip
+﻿# Builds a release zip for Nexus/GitHub: dist\hsh-kbm-<version>.zip
 # Layout inside the zip mirrors the game folder, so users extract it over the game root (after installing BepInEx 5 x86).
 $ErrorActionPreference = "Stop"
 $root = Resolve-Path "$PSScriptRoot\.."
@@ -20,8 +20,9 @@ Copy-Item "$root\assets\keys\*.json" "$plugin\keys"
 Copy-Item "$root\README.md" "$stage\HshKbm-README.md"
 Copy-Item "$root\LICENSE" "$stage\HshKbm-LICENSE.txt"
 
-$zip = "$root\dist\HshKbm-$version.zip"
+$zip = "$root\dist\hsh-kbm-$version.zip"
 Remove-Item $zip -Force -ErrorAction SilentlyContinue
 Compress-Archive -Path "$stage\*" -DestinationPath $zip
 Remove-Item $stage -Recurse -Force
 Write-Host "wrote $zip"
+
